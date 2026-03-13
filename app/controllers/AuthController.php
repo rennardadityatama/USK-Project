@@ -1,0 +1,275 @@
+<?php
+
+require_once BASE_PATH . '/app/models/UserModels.php';
+require_once BASE_PATH . '/app/helpers/Csrf.php';
+require_once BASE_PATH . '/app/middlewares/Middleware.php';
+
+
+class AuthController
+{
+  private $user;
+
+  public function __construct()
+  {
+    $this->user = new User();
+  }
+
+  /* =========================
+      RESPONSE JSON
+  ========================= */
+  private function json($status, $message, $data = [])
+  {
+    header('Content-Type: application/json');
+    echo json_encode([
+      'status'  => $status,
+      'message' => $message,
+      'data'    => $data
+    ]);
+    exit;
+  }
+
+  /* =========================
+      LOGIN
+  ========================= */
+  public function login()
+  {
+    // JIKA SUDAH LOGIN
+    if (isset($_SESSION['user'])) {
+      $role = (int) $_SESSION['user']['role'];
+
+      // Redirect sesuai role
+      $redirectUrl = Middleware::getUrlByRole($role);
+      header('Location: ' . $redirectUrl);
+      exit;
+    }
+
+    require_once BASE_PATH . '/app/views/auth/login.php';
+  }
+
+  public function loginProcess()
+  {
+    // Pastikan request POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+      $this->json(false, 'Invalid request');
+    }
+
+    if (!Csrf::check($_POST['csrf_token'] ?? '')) {
+      $this->json(false, 'Invalid CSRF token');
+    }
+
+    // Ambil input email & password
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    if (!$email || !$password) {
+      $this->json(false, 'Email and password is required');
+    }
+
+    // Cek login melalui User model
+    $user = $this->user->login($email, $password);
+
+    if (!$user) {
+      $this->json(false, 'Invalid email or password');
+    }
+
+    // Regenerate session ID untuk keamanan
+    session_regenerate_id(true);
+
+    // Simpan data user di session
+    $_SESSION['user'] = [
+      'id'    => $user['id'],
+      'name'  => $user['name'],
+      'address'  => $user['address'],
+      'email' => $user['email'],
+      'role'  => (int)$user['role_id'],
+      'role_name' => $user['role_name'],
+      'avatar' => $user['avatar'],
+    ];
+
+    // Hapus token CSRF lama
+    Csrf::destroy();
+
+    // Tentukan URL redirect berdasarkan role
+    $redirectUrl = Middleware::getUrlByRole((int)$user['role_id']);
+
+    $this->json(true, 'Successfull to Login', [
+      'redirect' => $redirectUrl
+    ]);
+  }
+
+  /* =========================
+      REGISTER
+  ========================= */
+  public function register()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+      require_once '../app/views/auth/register.php';
+      return;
+    }
+
+    if (!Csrf::check($_POST['csrf_token'] ?? '')) {
+      $this->json(false, 'Invalid CSRF token');
+    }
+
+    if ($_POST['password'] !== $_POST['confirm_password']) {
+      $this->json(false, 'Incorrect confirm password');
+    }
+
+    if ($this->user->findByEmail($_POST['email'])) {
+      $this->json(false, 'Email has been already');
+    }
+
+    if ($this->user->findByPhone($_POST['phone'])) {
+      $this->json(false, 'Phone Number has been already');
+    }
+
+    $this->user->register([
+      'name'           => $_POST['name'],
+      'email'          => $_POST['email'],
+      'password'       => $_POST['password'],
+      'phone'          => $_POST['phone'],
+      'address'        => $_POST['address'],
+    ]);
+
+    $this->json(true, 'Account Created Successfully', [
+      'redirect' => BASE_URL . 'index.php?c=auth&m=login'
+    ]);
+  }
+
+  /* =========================
+      FORGOT PASSWORD
+  ========================= */
+  public function forgot()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+      require_once '../app/views/auth/forgot.php';
+      return;
+    }
+
+    if (!Csrf::check($_POST['csrf_token'] ?? '')) {
+      $this->json(false, 'Invalid CSRF token');
+    }
+
+    $user = $this->user->findByEmail($_POST['email']);
+    if (!$user) {
+      $this->json(false, 'Email not registered');
+    }
+
+    $token  = bin2hex(random_bytes(32));
+    $expiry = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+
+    $this->user->saveResetToken($user['email'], $token, $expiry);
+
+    $link = BASE_URL . "index.php?c=auth&m=reset&token=$token";
+
+    $body = "
+    <p>Klik link berikut untuk reset password:</p>
+    <a href='$link'>$link</a>
+    <p>Link berlaku 10 menit</p>
+  ";
+
+    if (!sendMail($user['email'], 'Reset Password', $body)) {
+      $this->json(false, 'Failed to send email');
+    }
+
+    $this->json(true, 'Password reset link successfully sent to email');
+  }
+
+  /* =========================
+      RESET PASSWORD
+  ========================= */
+  public function reset()
+  {
+    $token = $_GET['token'] ?? null;
+    $user  = $this->user->findByToken($token);
+
+    if (!$user) {
+      die('Invalid Token');
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+      if (!Csrf::check($_POST['csrf_token'] ?? '')) {
+        $this->json(false, 'Invalid CSRF Token');
+      }
+
+      if ($_POST['password'] !== $_POST['confirm_password']) {
+        $this->json(false, 'Incorect Confirm Password');
+      }
+
+      $this->user->updatePassword($user['id'], $_POST['password']);
+      Csrf::destroy();
+
+      $this->json(true, 'Password has been changed');
+      exit;
+    }
+
+    require_once '../app/views/auth/reset.php';
+  }
+
+  /* =========================
+      LOGOUT
+  ========================= */
+  public function logout()
+  {
+    // Validasi metode request
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+      $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Method tidak diizinkan'
+      ];
+      header('Location: ' . BASE_URL . 'index.php?c=auth&m=login');
+      exit;
+    }
+
+    // Validasi CSRF token
+    if (!Csrf::check($_POST['csrf_token'] ?? '')) {
+      $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Token keamanan tidak valid'
+      ];
+      header('Location: ' . BASE_URL);
+      exit;
+    }
+
+    try {
+
+      // Hapus semua session data
+      $_SESSION = array();
+
+      // Hapus session cookie
+      if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(
+          session_name(),
+          '',
+          time() - 42000,
+          $params["path"],
+          $params["domain"],
+          $params["secure"],
+          $params["httponly"]
+        );
+      }
+
+      // Hancurkan session
+      session_destroy();
+
+      // Redirect ke halaman login dengan pesan sukses
+      $_SESSION['toast'] = [
+        'type' => 'success',
+        'message' => 'Berhasil logout'
+      ];
+
+      header('Location: ' . BASE_URL . 'index.php?c=auth&m=login');
+      exit;
+    } catch (Exception $e) {
+      // Jika error, tetap redirect ke login
+      $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Terjadi kesalahan saat logout'
+      ];
+      header('Location: ' . BASE_URL . 'index.php?c=auth&m=login');
+      exit;
+    }
+  }
+}
