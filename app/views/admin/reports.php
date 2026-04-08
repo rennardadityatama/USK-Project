@@ -107,9 +107,9 @@
           <div class="col-md-4">
             <div class="card">
               <div class="card-body">
-                <h6 class="text-muted">Avg Order Value</h6>
-                <h3 class="mb-0">
-                  Rp <?= number_format($summary['avg_order'] ?? 0) ?>
+                <h6 class="text-muted">Total Profit</h6>
+                <h3 class="mb-0 text-success">
+                  Rp <?= number_format($profitSummary['total_profit'] ?? 0) ?>
                 </h3>
               </div>
             </div>
@@ -142,6 +142,7 @@
                   <th>Customer</th>
                   <th>Total Amount</th>
                   <th>Payment Status</th>
+                  <th>Profit</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,6 +163,9 @@
                       <span class="badge bg-success">
                         <?= ucfirst($row['payment_status']) ?>
                       </span>
+                    </td>
+                    <td class="text-success">
+                      Rp <?= number_format($row['profit']) ?>
                     </td>
                   </tr>
                 <?php endforeach; ?>

@@ -42,42 +42,52 @@
 
       <?php foreach ($customers as $customer): ?>
         <div class="col-xl-4 col-lg-6">
-          <div class="card shadow-sm h-100 border-0">
-            <!-- BODY -->
-            <div class="card-body">
+          <div class="card h-100 border-0 shadow-sm hover-card">
 
+            <div class="card-body d-flex flex-column">
+
+              <!-- HEADER -->
               <div class="d-flex align-items-center mb-3">
-                <div>
-                  <h5 class="mb-0 fw-bold customer-name">
-                    <?= htmlspecialchars($customer['name']) ?>
-                  </h5>
-                  <small class="text-muted fs-6">Customer</small>
+                <div class="avatar-circle me-3">
+                  <?= strtoupper(substr($customer['name'], 0, 1)) ?>
                 </div>
 
+                <div>
+                  <h5 class="mb-0 fw-bold">
+                    <?= htmlspecialchars($customer['name']) ?>
+                  </h5>
+                  <small class="text-muted">Customer</small>
+                </div>
               </div>
 
-              <ul class="list-unstyled mb-3">
-                <li class="mb-2 fs-6 customer-email">
-                  <strong>Email:</strong><br>
-                  <?= htmlspecialchars($customer['email']) ?>
-                </li>
+              <!-- INFO -->
+              <div class="mb-3">
+                <div class="mb-2">
+                  <small class="text-muted d-block">Email</small>
+                  <span><?= htmlspecialchars($customer['email']) ?></span>
+                </div>
+
                 <?php if (!empty($customer['phone'])): ?>
-                  <li class="mb-2 fs-6">
-                    <strong>Phone:</strong><br>
-                    <?= htmlspecialchars($customer['phone']) ?>
-                  </li>
+                  <div>
+                    <small class="text-muted d-block">Phone</small>
+                    <span><?= htmlspecialchars($customer['phone']) ?></span>
+                  </div>
                 <?php endif; ?>
-              </ul>
-              <!-- TOTAL ORDERS -->
-              <div class="border-top pt-2 mt-2 text-center">
-                <span class="badge bg-primary fs-6 px-3 py-2">
-                  Total Orders : <?= $customer['total_orders'] ?>
-                </span>
               </div>
+
+              <!-- ACTION -->
+              <div class="mt-auto pt-3 border-top text-center">
+                <a href="<?= BASE_URL ?>index.php?c=adminOrder&m=byCustomer&id=<?= $customer['id'] ?>"
+                  class="btn btn-primary w-100">
+                  <i data-feather="shopping-cart"></i> View Orders
+                </a>
+              </div>
+
             </div>
           </div>
         </div>
       <?php endforeach; ?>
+
     </div>
   </div>
   <!-- Container-fluid Ends-->
@@ -87,6 +97,21 @@
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
   <div id="toastContainer"></div>
 </div>
+
+<style>
+  .avatar-circle {
+    width: 45px;
+    height: 45px;
+    background: #7366ff;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+  }
+</style>
 
 <script>
   const searchInput = document.getElementById("searchCustomer");

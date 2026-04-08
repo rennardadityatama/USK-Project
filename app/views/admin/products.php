@@ -108,7 +108,7 @@
                         <td><?= htmlspecialchars($p['description'] ?? '-') ?></td>
 
                         <td>
-                          <span class="badge bg-light text-dark border">
+                          <span class="badge bg-success text-white border">
                             <?= htmlspecialchars($p['category_name'] ?? '-') ?>
                           </span>
                         </td>

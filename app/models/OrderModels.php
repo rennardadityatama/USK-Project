@@ -72,22 +72,46 @@ class OrderModel
     public function getOrdersByCustomer($customerId)
     {
         $stmt = $this->db->prepare("
-            SELECT o.*, s.name AS seller_name
-            FROM orders o
-            JOIN users s ON s.id = o.seller_id
-            WHERE o.customer_id = :customer_id
-            ORDER BY o.created_at DESC
-        ");
+        SELECT 
+            o.*,
+            s.name AS seller_name,
+            oi.product_id,
+            oi.qty,
+            oi.price,
+            p.name AS product_name,
+            p.image AS product_image
+        FROM orders o
+        JOIN users s ON s.id = o.seller_id
+        LEFT JOIN order_items oi ON oi.order_id = o.id
+        LEFT JOIN products p ON p.id = oi.product_id
+        WHERE o.customer_id = :customer_id
+        ORDER BY o.created_at DESC
+    ");
 
         $stmt->execute([':customer_id' => $customerId]);
-        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // get items for each order
-        foreach ($orders as &$order) {
-            $order['items'] = $this->getOrderItems($order['id']);
+        // 🔥 grouping
+        $orders = [];
+        foreach ($rows as $row) {
+            $orderId = $row['id'];
+
+            if (!isset($orders[$orderId])) {
+                $orders[$orderId] = $row;
+                $orders[$orderId]['items'] = [];
+            }
+
+            if ($row['product_id']) {
+                $orders[$orderId]['items'][] = [
+                    'product_name' => $row['product_name'],
+                    'product_image' => $row['product_image'],
+                    'qty' => $row['qty'],
+                    'price' => $row['price']
+                ];
+            }
         }
 
-        return $orders;
+        return array_values($orders);
     }
 
     /**
@@ -488,14 +512,23 @@ class OrderModel
             o.created_at,
             o.total_amount,
             o.payment_status,
-            u.name AS customer_name
+            u.name AS customer_name,
+
+            SUM((oi.price - p.cost_price) * oi.qty) AS profit
+
         FROM orders o
         JOIN users u ON u.id = o.customer_id
+
+        JOIN order_items oi ON oi.order_id = o.id
+        JOIN products p ON p.id = oi.product_id
+
         WHERE o.seller_id = :seller_id
           AND o.status = 'completed'
           AND o.payment_status = 'paid'
           AND MONTH(o.created_at) = :month
           AND YEAR(o.created_at) = :year
+
+        GROUP BY o.id
         ORDER BY o.created_at DESC
     ");
 
