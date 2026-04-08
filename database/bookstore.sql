@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2026 at 06:46 AM
+-- Generation Time: Apr 08, 2026 at 03:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -134,12 +134,14 @@ INSERT INTO `notifications` (`id`, `user_id`, `order_id`, `room_id`, `type`, `ti
 (34, 35, 70, NULL, 'order_completed', 'Order Completed', 'Your order #000070 has been approved', 1, '2026-03-10 04:05:26'),
 (36, 35, 71, NULL, 'order_completed', 'Order Completed', 'Your order #000071 has been approved', 1, '2026-03-10 04:10:44'),
 (38, 38, 72, NULL, 'order_completed', 'Order Completed', 'Your order #000072 has been approved', 1, '2026-03-10 04:19:13'),
-(39, 36, NULL, 9, 'chat', 'New Message', 'rennard sent you a message', 0, '2026-03-10 04:55:54'),
+(39, 36, NULL, 9, 'chat', 'New Message', 'rennard sent you a message', 1, '2026-03-10 04:55:54'),
 (41, 35, 73, NULL, 'order_completed', 'Order Completed', 'Your order #000073 has been approved', 1, '2026-03-10 04:58:03'),
-(42, 36, 74, NULL, 'new_order', 'New Order', 'Order #000074 needs completed payment', 0, '2026-03-10 04:59:34'),
-(43, 36, 75, NULL, 'new_order', 'New Order', 'Order #000075 needs completed payment', 0, '2026-03-10 05:09:16'),
-(44, 36, 76, NULL, 'new_order', 'New Order', 'Order #000076 needs completed payment', 0, '2026-03-10 05:14:19'),
-(46, 35, 77, NULL, 'order_completed', 'Order Completed', 'Your order #000077 has been approved', 0, '2026-03-10 06:16:19');
+(46, 35, 77, NULL, 'order_completed', 'Order Completed', 'Your order #000077 has been approved', 1, '2026-03-10 06:16:19'),
+(48, 35, 78, NULL, 'order_completed', 'Order Completed', 'Your order #000078 has been approved', 1, '2026-03-13 05:58:38'),
+(49, 35, 76, NULL, 'order_completed', 'Order Completed', 'Your order #000076 has been approved', 0, '2026-04-07 01:37:31'),
+(50, 35, 75, NULL, 'order_completed', 'Order Completed', 'Your order #000075 has been approved', 0, '2026-04-07 01:37:39'),
+(51, 35, 74, NULL, 'order_completed', 'Order Completed', 'Your order #000074 has been approved', 0, '2026-04-07 01:37:43'),
+(53, 35, 79, NULL, 'order_completed', 'Order Completed', 'Your order #000079 has been approved', 0, '2026-04-07 01:59:01');
 
 -- --------------------------------------------------------
 
@@ -175,10 +177,12 @@ INSERT INTO `orders` (`id`, `customer_id`, `seller_id`, `total_amount`, `payment
 (71, 35, 36, 112000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 11:09:02', '2026-03-10 11:10:44', 120000.00, 8000.00),
 (72, 38, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 11:15:52', '2026-03-10 11:19:13', 150000.00, 50000.00),
 (73, 35, 36, 24000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 11:57:16', '2026-03-10 11:58:03', 50000.00, 26000.00),
-(74, 35, 36, 12000, 'cash', 'pending', 'pending', 'waiting_verification', '2026-03-10 11:59:34', NULL, NULL, NULL),
-(75, 35, 36, 100000, 'cash', 'pending', 'pending', 'waiting_verification', '2026-03-10 12:09:16', NULL, NULL, NULL),
-(76, 35, 36, 100000, 'cash', 'pending', 'pending', 'waiting_verification', '2026-03-10 12:14:19', NULL, NULL, NULL),
-(77, 35, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 13:14:03', '2026-03-10 13:16:19', 120000.00, 20000.00);
+(74, 35, 36, 12000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 11:59:34', '2026-04-07 08:37:43', 15000.00, 3000.00),
+(75, 35, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 12:09:16', '2026-04-07 08:37:39', 150000.00, 50000.00),
+(76, 35, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 12:14:19', '2026-04-07 08:37:31', 150000.00, 50000.00),
+(77, 35, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-03-10 13:14:03', '2026-03-10 13:16:19', 120000.00, 20000.00),
+(78, 35, 36, 12000, 'cash', 'shipped', 'completed', 'paid', '2026-03-13 12:57:56', '2026-03-13 12:58:38', 15000.00, 3000.00),
+(79, 35, 36, 100000, 'cash', 'shipped', 'completed', 'paid', '2026-04-07 08:38:17', '2026-04-07 08:59:01', 990000.00, 890000.00);
 
 -- --------------------------------------------------------
 
@@ -244,7 +248,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `price`, `qty`, `subt
 (78, 74, 17, 12000.00, 1, 12000.00, '2026-03-10 11:59:34'),
 (79, 75, 18, 100000.00, 1, 100000.00, '2026-03-10 12:09:16'),
 (80, 76, 18, 100000.00, 1, 100000.00, '2026-03-10 12:14:19'),
-(81, 77, 18, 100000.00, 1, 100000.00, '2026-03-10 13:14:03');
+(81, 77, 18, 100000.00, 1, 100000.00, '2026-03-10 13:14:03'),
+(82, 78, 17, 12000.00, 1, 12000.00, '2026-03-13 12:57:56'),
+(83, 79, 18, 100000.00, 1, 100000.00, '2026-04-07 08:38:17');
 
 -- --------------------------------------------------------
 
@@ -272,8 +278,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `price`, `cost_price`, `margin`, `stock`, `image`, `description`, `seller_id`, `category_id`, `is_active`, `deleted_at`) VALUES
-(17, 'Castle in The Sky', 12000, 10000, 2000, 3, 'prod_69af33a64699a.png', 'Castle in The Sky', 36, 35, 1, NULL),
-(18, 'Time Travel To Dark', 100000, 90000, 10000, 7, 'prod_69af8b0133704.png', 'Time Travel', 36, 35, 1, NULL),
+(17, 'Castle in The Sky', 12000, 10000, 2000, 1, 'prod_69af33a64699a.png', 'Castle in The Sky', 36, 35, 1, NULL),
+(18, 'Time Travel To Dark', 100000, 90000, 10000, 4, 'prod_69af8b0133704.png', 'Time Travel', 36, 35, 1, NULL),
 (19, 'Book of Life', 12000, 10000, 2000, 0, 'prod_69afa3bcee467.png', 'Castle', 36, 42, 1, NULL);
 
 -- --------------------------------------------------------
@@ -320,8 +326,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `reset_token`, `reset_expiry`, `address`, `role_id`, `avatar`) VALUES
 (35, 'rennard', 'rennard95@gmail.com', '$2y$10$JbrwATMeTDBWTvQ/SXDAv.cHNSSFuXsLMP7HnIWpgR8pMjKyHrxB6', '082213521461', NULL, NULL, 'Jakarta', 2, ''),
-(36, 'admin', 'rennardadit@gmail.com', '$2y$10$zf6hFNbAgx31hMorf9oBeuNWaCKFUSA2v0J3Uy/lnYxg9ECo2paJe', '081284421151', NULL, NULL, 'Bandung', 1, ''),
-(38, 'Cella', 'cella@gmail.com', '$2y$10$BIOZN8Go6qT.36mYA8ktw.FDW9DU1EAqbGhmLnuwxmeVgpbADXyne', '082211598715', NULL, NULL, 'Jakarta', 2, '');
+(36, 'admin', 'rennardadit@gmail.com', '$2y$10$QZ/R3g5KSIdgJ5JoDsgdHu/jGVxJa4Tuoz.lgq8kM5ZhlUQ0phIbK', '081284421151', NULL, NULL, 'Bandung', 1, ''),
+(38, 'Cella', 'cella@gmail.com', '$2y$10$BIOZN8Go6qT.36mYA8ktw.FDW9DU1EAqbGhmLnuwxmeVgpbADXyne', '082211598715', NULL, NULL, 'Jakarta', 2, ''),
+(43, 'user1', 'users@gmail.com', '$2y$10$H5hbwNXaz1f9A.Tuo/qjGeFvcB06t/zdEqzYU9escdX4w0cHI46Nm', '082213314324', NULL, NULL, 'Jakarta', 2, '');
 
 --
 -- Indexes for dumped tables
@@ -414,7 +421,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -438,19 +445,19 @@ ALTER TABLE `chat_rooms`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -468,7 +475,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- Constraints for dumped tables
