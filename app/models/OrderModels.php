@@ -76,6 +76,7 @@ class OrderModel
             FROM orders o
             JOIN users s ON s.id = o.seller_id
             WHERE o.customer_id = :customer_id
+            ORDER BY o.created_at DESC
         ");
 
         $stmt->execute([':customer_id' => $customerId]);

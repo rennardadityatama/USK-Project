@@ -51,6 +51,12 @@
                 </li>
                 <li class="sidebar-list">
                   <i class="fa fa-thumb-tack"></i>
+                  <a class="sidebar-link sidebar-title link-nav" href="<?= BASE_URL ?>index.php?c=adminReports&m=index">
+                    <i data-feather="printer"> </i>
+                    <span>Reports</span></a>
+                </li>
+                <li class="sidebar-list">
+                  <i class="fa fa-thumb-tack"></i>
                   <a class="sidebar-link sidebar-title link-nav" href="<?= BASE_URL ?>index.php?c=admin&m=faq">
                     <i data-feather="help-circle"> </i>
                     <span>FAQ</span></a>

@@ -54,6 +54,7 @@
                       <th>Total</th>
                       <th>Payment</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -101,6 +102,14 @@
                           };
                           ?>
                           <span class="badge <?= $statusClass ?>"><?= ucfirst($order['status']) ?></span>
+                        </td>
+                        <td class="text-center">
+                          <div class="d-inline-flex gap-1">
+                            <a href="<?= BASE_URL ?>index.php?c=userOrder&m=invoice&orders=<?= $order['id'] ?>"
+                              class="btn btn-primary btn-sm px-2 py-1">
+                              View Invoice
+                            </a>
+                          </div>
                         </td>
                       </tr>
                     <?php endforeach; ?>
